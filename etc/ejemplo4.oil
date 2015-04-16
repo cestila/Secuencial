@@ -1,0 +1,69 @@
+OSEK OSEK {
+
+   OS	ExampleOS {
+      STATUS = EXTENDED;
+      ERRORHOOK = FALSE;
+      PRETASKHOOK = FALSE;
+      POSTTASKHOOK = FALSE;
+      STARTUPHOOK = FALSE;
+      SHUTDOWNHOOK = FALSE;
+      USERESSCHEDULER = FALSE;
+      MEMMAP = FALSE;
+   };
+	
+	APPMODE = AppMode1;
+	EVENT = POSIXE;
+   RESOURCE = POSIXR;
+      
+   TASK InitTask {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+      };
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+   };
+   
+   TASK SwitchTask {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      EVENT = POSIXE;
+      RESOURCE = POSIXR;
+      TYPE = EXTENDED;
+      SCHEDULE = FULL;
+   };
+   	   
+   TASK PeriodicTask {
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      EVENT = POSIXE;
+      RESOURCE = POSIXR;
+      SCHEDULE = FULL;
+   };
+   
+   ALARM ActivatePeriodic {
+   	COUNTER = HardwareCounter;
+   	ACTION = ACTIVATETASK {
+      	TASK = PeriodicTask;
+    	};
+   	AUTOSTART = TRUE {
+      	APPMODE = AppMode1;
+      	ALARMTIME = 500;
+      	CYCLETIME = 1000;
+   	};
+	};
+	
+	COUNTER HardwareCounter {
+	   MAXALLOWEDVALUE = 1000;
+	   TICKSPERBASE = 1;
+	   MINCYCLE = 1;
+	   TYPE = HARDWARE;
+	   COUNTER = HWCOUNTER0;
+	};
+};
+	
